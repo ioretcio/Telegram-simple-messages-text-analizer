@@ -1,8 +1,10 @@
 import json
 import sys
-
 import shutil
 from datetime import datetime
+
+
+
 def plot(x, y, rows=None, columns=None):
     def_col, def_row = get_terminal_size()
     rows = rows if rows else def_row
@@ -21,7 +23,6 @@ def plot(x, y, rows=None, columns=None):
     for row in ["".join(row) for row in canvas]:
         print(row)
 
-
 def scale(x, length):
     s = (
         float(length - 1) / (max(x) - min(x))
@@ -32,13 +33,6 @@ def scale(x, length):
 
 def get_terminal_size():
     return shutil.get_terminal_size()
-
-print(shutil.get_terminal_size())
-
-
-
-
-
 
 
 if len(sys.argv)<2:
