@@ -6,7 +6,7 @@ from datetime import datetime
 
 
 def plot(x, y, rows=None, columns=None):
-    def_col, def_row = get_terminal_size()
+    def_col, def_row = shutil.get_terminal_size()
     rows = rows if rows else def_row
     columns = columns if columns else def_col
     rows -= 4
@@ -30,9 +30,6 @@ def scale(x, length):
         else length
     )
     return [int((i - min(x)) * s) for i in x]
-
-def get_terminal_size():
-    return shutil.get_terminal_size()
 
 
 if len(sys.argv)<2:
@@ -74,8 +71,8 @@ else:
                     else:
                         words[mword] += 1
 
-            message_date = message['date']
-            message_segment = int((datetime.strptime(message_date, "%Y-%m-%dT%H:%M:%S") - datetime.strptime(data['messages'][0]['date'], "%Y-%m-%dT%H:%M:%S")).total_seconds() / time_interval)
+            message_date = int(message['date_unixtime'])
+            message_segment = int(( message_date -  int(data['messages'][0]['date_unixtime']) ) / time_interval)
             if message_segment in time_segments.keys():
                 time_segments[message_segment] += 1
             else:
@@ -105,3 +102,14 @@ else:
         x = range(0, 50, 1)
         y = list(time_segments.values())
         plot(x, y)
+        
+        def_col, def_row = shutil.get_terminal_size()
+        scaledy = scale(y, def_col-55)
+        for timepart in x:
+            print(datetime.fromtimestamp(   int(data['messages'][0]['date_unixtime']) + \
+                timepart * time_interval).strftime("%Y-%m-%d.%H:%M:%S"), "~", datetime.fromtimestamp(\
+                    int(data['messages'][0]['date_unixtime']) +\
+                        (timepart+1) *time_interval).strftime("%Y-%m-%d.%H:%M:%S"), " total= " , y[timepart], end='' )
+            for i in range(0, scaledy[timepart]):
+                print('✉', end='')
+            print()
